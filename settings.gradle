@@ -1,2 +1,10 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal() // It's good practice to also include this
+    }
+}
+
 rootProject.name = "android-job-assignment"
 include ':app'
