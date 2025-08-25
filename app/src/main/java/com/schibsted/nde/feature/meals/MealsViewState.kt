@@ -1,10 +1,10 @@
 package com.schibsted.nde.feature.meals
 
-import com.schibsted.nde.model.MealResponse
+import com.schibsted.nde.database.MealEntity
 
 data class MealsViewState(
-    val meals: List<MealResponse> = emptyList(),
-    val filteredMeals: List<MealResponse> = emptyList(),
+    val meals: List<MealEntity> = emptyList(),
+    val filteredMeals: List<MealEntity> = emptyList(),
     val isLoading: Boolean = false,
     val query: String? = null
 )
