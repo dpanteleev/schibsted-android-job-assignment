@@ -67,6 +67,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.schibsted.nde.database.MealEntity
 import com.schibsted.nde.feature.common.MealImage
 import com.schibsted.nde.feature.common.NavRoute
 import com.schibsted.nde.model.MealResponse
@@ -80,7 +81,7 @@ import kotlinx.coroutines.launch
 )
 @ExperimentalFoundationApi
 @Composable
-fun MealsScreen(viewModel: MealsViewModel, navigateToDetails: (meal: MealResponse) -> Unit) {
+fun MealsScreen(viewModel: MealsViewModel, navigateToDetails: (meal: MealEntity) -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
@@ -165,7 +166,7 @@ fun MealsScreen(viewModel: MealsViewModel, navigateToDetails: (meal: MealRespons
 
 @ExperimentalFoundationApi
 @Composable
-fun MealsScreenContent(viewModel: MealsViewModel, navigateToDetails: (meal: MealResponse) -> Unit) {
+fun MealsScreenContent(viewModel: MealsViewModel, navigateToDetails: (meal: MealEntity) -> Unit) {
     val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -230,8 +231,8 @@ fun MealsScreenContent(viewModel: MealsViewModel, navigateToDetails: (meal: Meal
 
 @Composable
 fun MealRowComposable(
-    meal: MealResponse,
-    onItemClick: (meal: MealResponse) -> Unit = {}
+    meal: MealEntity,
+    onItemClick: (meal: MealEntity) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -244,7 +245,7 @@ fun MealRowComposable(
                 onItemClick(meal)
             }
     ) {
-        MealImage(meal.strMealThumb, Modifier.size(64.dp))
+        MealImage(meal.thumbnailUrl, Modifier.size(64.dp))
         Column(
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -252,13 +253,13 @@ fun MealRowComposable(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    meal.strCategory,
+                    meal.category,
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier.weight(1f)
                 )
             }
             Text(
-                meal.strMeal, fontWeight = FontWeight.Bold,
+                meal.mealName, fontWeight = FontWeight.Bold,
                 style = typography.h6
             )
         }

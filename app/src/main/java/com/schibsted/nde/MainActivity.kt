@@ -12,9 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.schibsted.nde.feature.common.NavRoute
 import com.schibsted.nde.feature.details.MealDetailsScreen
 import com.schibsted.nde.feature.meals.MealsScreen
@@ -51,22 +53,22 @@ fun NavGraph(navController: NavHostController) {
             MealsScreen(
                 hiltViewModel(),
                 navigateToDetails = { meal ->
-                    navController
-                        .currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("item", meal)
-                    navController.navigate(NavRoute.MealDetailsScreen.path)
+                    navController.navigate(
+                        NavRoute.MealDetailsScreen.createRoute(meal.id)
+                    )
                 }
             )
         }
-        composable(route = NavRoute.MealDetailsScreen.path) {
-            val meal = navController
-                .previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<MealResponse>("item")
-            if (meal != null) {
-                MealDetailsScreen(meal = meal, onBackClick = navController::popBackStack)
-            }
+        composable(
+            route = NavRoute.MealDetailsScreen.path,
+            arguments = listOf(navArgument(NavRoute.MealDetailsScreen.argMealId) {
+                type = NavType.StringType
+            })
+        ) {
+            MealDetailsScreen(
+                viewModel = hiltViewModel(),
+                onBackClick = navController::popBackStack
+            )
         }
     }
 }

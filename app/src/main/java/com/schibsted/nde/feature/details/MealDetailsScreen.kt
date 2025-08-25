@@ -22,18 +22,21 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
+import com.schibsted.nde.database.MealEntity
 import com.schibsted.nde.feature.common.MealImage
 import com.schibsted.nde.model.MealResponse
 import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MealDetailsScreen(meal: MealResponse, onBackClick: () -> Unit) {
+fun MealDetailsScreen(viewModel: MealDetailsViewModel, onBackClick: () -> Unit) {
+    val state = viewModel.state.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,7 +45,7 @@ fun MealDetailsScreen(meal: MealResponse, onBackClick: () -> Unit) {
                 backgroundColor = MaterialTheme.colors.primary,
                 title = {
                     Text(
-                        text = meal.strMeal
+                        text = state.value?.mealName ?: "",
                     )
                 },
                 navigationIcon = {
@@ -64,14 +67,17 @@ fun MealDetailsScreen(meal: MealResponse, onBackClick: () -> Unit) {
             Surface(
                 modifier = Modifier.padding(contentPadding),
             ) {
-                MealsDetailsScreenContent(meal = meal)
+                state.value?.let {
+                    MealsDetailsScreenContent(meal = it)
+                }
+
             }
         }
     )
 }
 
 @Composable
-fun MealsDetailsScreenContent(meal: MealResponse) {
+fun MealsDetailsScreenContent(meal: MealEntity) {
 
     val instructions = prepareInstructionList(meal)
 
@@ -82,7 +88,7 @@ fun MealsDetailsScreenContent(meal: MealResponse) {
     ) {
         item {
             MealImage(
-                thumb = meal.strMealThumb,
+                thumb = meal.thumbnailUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
@@ -92,7 +98,7 @@ fun MealsDetailsScreenContent(meal: MealResponse) {
 
         item {
             Text(
-                text = meal.strMeal,
+                text = meal.mealName,
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -118,8 +124,8 @@ fun MealsDetailsScreenContent(meal: MealResponse) {
     }
 }
 
-fun prepareInstructionList(meal: MealResponse): List<String> {
-    val text = meal.strInstructions
+fun prepareInstructionList(meal: MealEntity): List<String> {
+    val text = meal.instructions
 
     val locale: Locale = Locale.getDefault()
 
@@ -145,19 +151,19 @@ fun prepareInstructionList(meal: MealResponse): List<String> {
     return sentences
 }
 
-@Preview(showBackground = true)
-@Composable
-fun RecipeDetailScreenPreview() {
-    MaterialTheme {
-        MealsDetailsScreenContent(
-            meal = MealResponse(
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "Test first line. Test second line.",
-            )
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun RecipeDetailScreenPreview() {
+//    MaterialTheme {
+//        MealsDetailsScreenContent(
+//            meal = MealResponse(
+//                "test",
+//                "test",
+//                "test",
+//                "test",
+//                "test",
+//                "Test first line. Test second line.",
+//            )
+//        )
+//    }
+//}
